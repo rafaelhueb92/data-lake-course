@@ -1,12 +1,3 @@
-# main.tf
-
-data "aws_caller_identity" "current" {}
-
-locals {
-  account_id = data.aws_caller_identity.current.account_id
-  bucket_name = "${var.bucket_name}-${local.account_id}"
-}
-
 resource "aws_s3_bucket" "data_bucket" {
   bucket = local.bucket_name
   
@@ -32,4 +23,9 @@ resource "aws_s3_object" "gold_folder" {
   bucket = aws_s3_bucket.data_bucket.id
   key    = "gold/"
   content_type = "application/x-directory"
+}
+
+module "crawler" { 
+   source = "./crawler"
+   name = local.bucket_name
 }
